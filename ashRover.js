@@ -31,26 +31,20 @@ function checkForObstacles(x,y) {
 	}
 }
 
-//Checks the Y coordinate to make sure it is not out of bounds (wrapping planet).
-function checkIndexY(index) {
-	if (index === 21) {
-		indexY -= 21;
+//Checks the X or Y coordinate to make sure it is not out of bounds (wrapping planet).
+function checkIndex(index, XorY) {
+	if (index == XcoordinatePosArr.length && XorY == false) {
+		indexX -= XcoordinatePosArr.length;
 		return 0;
-	} if (index === -1) {
-		indexY += 21;
-		return 20;
-	} else {
-		return index;
-	}
-}
-//Checks the X coordinate to make sure it is not out of bounds (wrapping planet).
-function checkIndexX(index) {
-	if (index === 21) {
-		indexX -= 21;
+	} else if (index == YcoordinatePosArr.length && XorY == true) {
+		indexY -= YcoordinatePosArr.length;
 		return 0;
-	} if (index === -1) {
-		indexX += 21;
-		return 20;
+	} else if (index == -1 && XorY == false) {
+		indexX += XcoordinatePosArr.length;
+		return XcoordinatePosArr.length-1;
+	} else if (index == -1 && XorY == true) {
+		indexY += YcoordinatePosArr.length;
+		return YcoordinatePosArr.length-1;
 	} else {
 		return index;
 	}
@@ -58,12 +52,13 @@ function checkIndexX(index) {
 
 //Starts the app, relays starting position.
 function roverStart(){
-	for (var i = -10; i <= 10; i++) {
+	var gridSize = 10;
+	for (var i = -(gridSize); i <= gridSize; i++) {
 		XcoordinatePosArr.push(i);
 		YcoordinatePosArr.push(i);
 	}
-	indexX = 10;
-	indexY = 10;
+	indexX = (XcoordinatePosArr.length - 1)/2
+	indexY = (YcoordinatePosArr.length - 1)/2
 	cordX = XcoordinatePosArr[indexX];
 	cordY = YcoordinatePosArr[indexY];
 	pos = 'N';
@@ -79,11 +74,14 @@ function getCommands(){
 	prompt.question("Enter your commands ('L' or 'R' to turn. 'F 'or 'B' to move. 'C' to finish entering commands.): ", (inputCommands) => {
 		var inputCommandsUC = inputCommands.toUpperCase();
 		if (inputCommandsUC == "L" || inputCommandsUC == "R" || inputCommandsUC == "F" || inputCommandsUC == "B") {
+			//Adds valid input to array.
 			commandArray.push(inputCommandsUC);
 			getCommands();
 		} else if (inputCommandsUC == "C") {
+			//Starts the rover.
 			roverGo();
 		} else {
+			//Catches invalid input.
 			console.log("Invalid Choice!");
 			getCommands();
 		}
@@ -91,9 +89,9 @@ function getCommands(){
 }
 
 //Analyzes the commands in the array and moves the rover accordingly.
-function analyzeCommand(x) {
+function analyzeCommand(command) {
 	//Rover turns left. Changes direction.
-	if (x == "L") {
+	if (command == "L") {
 		if (pos == "N") {
 			pos = "W";
 		} else if (pos == "W") {
@@ -105,7 +103,7 @@ function analyzeCommand(x) {
 		}
 		return 'The rover turned left. It is now facing ' + pos + ".";
 	//Rover turns right. Changes direction.
-	} else if (x == "R") {
+	} else if (command == "R") {
 		if (pos == "N") {
 			pos = "E";
 		} else if (pos == "E") {
@@ -117,34 +115,36 @@ function analyzeCommand(x) {
 		}
 		return 'The rover turned right. It is now facing ' + pos + ".";
 	//Rover moves forward. Changes coordinate.
-	} else if (x == "F") {
+	} else if (command == "F") {
 		if (pos == "N") {
 			indexY++;
-			cordY = YcoordinatePosArr[checkIndexY(indexY)];
+			checkCordY = YcoordinatePosArr[checkIndex(indexY, true)];
+			cordY = checkCordY;
 		} else if (pos == "S") {
 			indexY--;
-			cordY = YcoordinatePosArr[checkIndexY(indexY)];
+			cordY = YcoordinatePosArr[checkIndex(indexY, true)];
 		} else if (pos == "E") {
 			indexX++;
-			cordX = XcoordinatePosArr[checkIndexX(indexX)];
+			cordX = XcoordinatePosArr[checkIndex(indexX, false)];
 		} else if (pos == "W") {
 			indexX--;
-			cordX = XcoordinatePosArr[checkIndexX(indexX)];
+			cordX = XcoordinatePosArr[checkIndex(indexX, false)];
 		}
 		return 'The rover moved forward. It is still facing ' + pos + ".";	
-	} else if (x == "B") {
+	//Rover moves backward. Changes coordinate.
+	} else if (command == "B") {
 		if (pos == "N") {
 			indexY--;
-			cordY = YcoordinatePosArr[checkIndexY(indexY)];
+			cordY = YcoordinatePosArr[checkIndex(indexY, true)];
 		} else if (pos == "S") {
 			indexY++;
-			cordY = YcoordinatePosArr[checkIndexY(indexY)];
+			cordY = YcoordinatePosArr[checkIndex(indexY, true)];
 		} else if (pos == "E") {
 			indexX--;
-			cordX = XcoordinatePosArr[checkIndexX(indexX)];
+			cordX = XcoordinatePosArr[checkIndex(indexX, false)];
 		} else if (pos == "W") {
 			indexX++;
-			cordX = XcoordinatePosArr[checkIndexX(indexX)];
+			cordX = XcoordinatePosArr[checkIndex(indexX, false)];
 		}
 		return 'The rover moved backward. It is still facing ' + pos + ".";
 	}
