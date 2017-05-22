@@ -20,6 +20,17 @@ function roverPosition(x,y) {
 	return "["+x+","+y+"]";
 }
 
+//Checks the coordinate for an obstacle before movement.
+function checkForObstacles(x,y) {
+	//Obstacle coordinates are [0,4],[-5,9], [10,1].
+	if (x == 0 && y == 4 || x == -5 && y == 9 || x == 10 && y == 1) {
+		console.log("Obstacle detected! Aborting any remaining commands...");
+		return true;
+	} else {
+		return false;
+	}
+}
+
 //Checks the Y coordinate to make sure it is not out of bounds (wrapping planet).
 function checkIndexY(index) {
 	if (index === 21) {
@@ -61,19 +72,18 @@ function roverStart(){
 }
 
 //Handles the user's input for the rover's commands.
-function getCommands() {
+function getCommands(){
+	if (commandArray.length > 0) {
+		console.log(commandArray);
+	}
 	prompt.question("Enter your commands ('L' or 'R' to turn. 'F 'or 'B' to move. 'C' to finish entering commands.): ", (inputCommands) => {
 		var inputCommandsUC = inputCommands.toUpperCase();
 		if (inputCommandsUC == "L" || inputCommandsUC == "R" || inputCommandsUC == "F" || inputCommandsUC == "B") {
-			//Adds valid input to array.
 			commandArray.push(inputCommandsUC);
 			getCommands();
 		} else if (inputCommandsUC == "C") {
-			//Starts the rover.
-			console.log("Starting Rover...");
 			roverGo();
 		} else {
-			//Catches invalid input.
 			console.log("Invalid Choice!");
 			getCommands();
 		}
@@ -147,8 +157,13 @@ function roverGo(){
 		console.log("Launching rover...");
 		for (var i = 0; i <= commandArray.length - 1; i++) {
 			console.log(analyzeCommand(commandArray[i]));
-			console.log("It's coordinates are: " + roverPosition(cordX,cordY));
-			console.log("...");
+			if (checkForObstacles(cordX,cordY) == false) {
+				console.log("Movement success. The rover's new coordinates are: " + roverPosition(cordX,cordY));
+				console.log("...");
+			} else {
+				break;
+				prompt.close();
+			}
 		}
 	} else {
 		console.log("The rover was given no commands. Cancelling launch...");
