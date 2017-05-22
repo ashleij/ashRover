@@ -7,6 +7,16 @@ var prompt = readline.createInterface({
     output: process.stdout
 });
 
+//Sleep function.
+var sleep = function(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds) {
+			break;
+		}
+    }
+};
+
 //Naming variables.
 var cordX;
 var cordY;
@@ -157,8 +167,10 @@ function roverGo(){
 		console.log("Your commands are: " + commandArray);
 		console.log("Launching rover...");
 		for (var i = 0; i <= commandArray.length - 1; i++) {
+			sleep(500);
 			console.log(analyzeCommand(commandArray[i]));
 			if (checkForObstacles(cordX,cordY) == false) {
+				sleep(1100);
 				console.log("Movement success. The rover's new coordinates are: " + roverPosition(cordX,cordY));
 				console.log("...");
 			} else {
