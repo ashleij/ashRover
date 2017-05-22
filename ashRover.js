@@ -92,26 +92,27 @@ function getCommands(){
 function analyzeCommand(command) {
 	//Rover turns left. Changes direction.
 	if (command == "L") {
-		if (pos == "N") {
-			pos = "W";
-		} else if (pos == "W") {
-			pos = "S";
-		} else if (pos == "S") {
-			pos = "E";
-		} else if (pos == "E") {
-			pos = "N";
+		switch(pos) {
+			case 'N': pos = 'W';
+     		break;
+		    case 'W': pos = 'S';
+		    break;
+		    case 'S': pos = 'E';
+		    break;
+		    case 'E': pos = 'N';
+		    break;
 		}
 		return 'The rover turned left. It is now facing ' + pos + ".";
-	//Rover turns right. Changes direction.
 	} else if (command == "R") {
-		if (pos == "N") {
-			pos = "E";
-		} else if (pos == "E") {
-			pos = "S";
-		} else if (pos == "S") {
-			pos = "W";
-		} else if (pos == "W") {
-			pos = "N";
+		switch(pos) {
+			case 'N': pos = 'E';
+     		break;
+		    case 'E': pos = 'S';
+		    break;
+		    case 'S': pos = 'W';
+		    break;
+		    case 'W': pos = 'N';
+		    break;
 		}
 		return 'The rover turned right. It is now facing ' + pos + ".";
 	//Rover moves forward. Changes coordinate.
@@ -130,7 +131,7 @@ function analyzeCommand(command) {
 			indexX--;
 			cordX = XcoordinatePosArr[checkIndex(indexX, false)];
 		}
-		return 'The rover moved forward. It is still facing ' + pos + ".";	
+		return 'The rover will attempt to move forward. It is still facing ' + pos + ".";	
 	//Rover moves backward. Changes coordinate.
 	} else if (command == "B") {
 		if (pos == "N") {
@@ -146,7 +147,7 @@ function analyzeCommand(command) {
 			indexX++;
 			cordX = XcoordinatePosArr[checkIndex(indexX, false)];
 		}
-		return 'The rover moved backward. It is still facing ' + pos + ".";
+		return 'The rover will attempt to move backward. It is still facing ' + pos + ".";
 	}
 }
 
